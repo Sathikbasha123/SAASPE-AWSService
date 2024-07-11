@@ -1,0 +1,83 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: saaspe-aws-services
+  namespace: {#namespace#}
+  labels:
+    app: saaspe-aws-services
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: saaspe-aws-services
+  template:
+    metadata:
+      name: saaspe-aws-services
+      labels:
+        app: saaspe-aws-services
+    spec:
+      containers:
+        - name: saaspe-aws-services
+          image: {#image#}
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8081
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "200m"
+            limits:
+              memory: "750Mi"
+              cpu: "350m"
+              
+          # env:
+          # - name: SPRING_DATASOURCE_URL       # Postgres URL variable
+          #   valueFrom: 
+          #     configMapKeyRef:
+          #       name: saaspe-microservices-config
+          #       key: POSTGRES_URL        
+          # - name: SPRING_DATASOURCE_USERNAME    # Postgres DB User Name
+          #   valueFrom: 
+          #     configMapKeyRef:
+          #       name: saaspe-microservices-config
+          #       key: POSTGRES_USERNAME
+          # - name: SPRING_DATASOURCE_PASSWORD    # Postgres DB Password
+          #   valueFrom: 
+          #     configMapKeyRef:
+          #       name: saaspe-microservices-config
+          #       key: POSTGRES_PASSWORD
+          # - name: SPRING_DATA_MONGODB_HOST    # MongoDB Host
+          #   valueFrom: 
+          #     configMapKeyRef:
+          #       name: saaspe-microservices-config
+          #       key: MONGODB_HOST
+          # - name: SPRING_DATA_MONGODB_USERNAME    #MongoDB UserName
+          #   valueFrom: 
+          #     configMapKeyRef:
+          #       name: saaspe-microservices-config
+          #       key: MONGODB_USERNAME     
+          # - name: SPRING_DATA_MONGODB_PASSWORD    # MongoDB Password
+          #   valueFrom: 
+          #     configMapKeyRef:
+          #       name: saaspe-microservices-config
+          #       key: MONGODB_PASSWORD
+          # - name: SPRING_DATA_MONGODB_DATABASE    # MongoDB Database
+          #   valueFrom: 
+          #     configMapKeyRef:
+          #       name: saaspe-microservices-config
+          #       key: MONGODB_DATABASE
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: saaspe-aws-services
+  namespace:  {#namespace#}
+  labels:
+    app: saaspe-aws-services
+spec:
+  ports:
+    - port: 8081
+      targetPort: 8081
+  selector:
+    app: saaspe-aws-services
+  type: ClusterIP
